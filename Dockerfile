@@ -1,13 +1,14 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
 
-# Cài các dependency hệ thống + rust
-RUN apt update -y && \
-    apt install -y awscli curl build-essential && \
+# Cài công cụ cần thiết bao gồm Rust
+RUN apt update && \
+    apt install -y curl build-essential awscli && \
     curl https://sh.rustup.rs -sSf | sh -s -- -y && \
-    export PATH="$HOME/.cargo/bin:$PATH"
+    ln -s /root/.cargo/bin/cargo /usr/bin/cargo && \
+    ln -s /root/.cargo/bin/rustc /usr/bin/rustc
 
-# Thêm Rust vào PATH (cho cả RUN bên dưới)
-ENV PATH="/root/.cargo/bin:$PATH"
+# Thêm Rust vào PATH
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 WORKDIR /app
 
