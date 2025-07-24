@@ -1,21 +1,18 @@
 FROM python:3.12-slim
 
-# Cài các công cụ cần thiết để biên dịch thư viện Rust
-RUN apt update -y && apt install -y \
-    awscli \
-    curl \
-    build-essential \
-    libssl-dev \
-    pkg-config \
-    git \
-    gcc \
-    cargo
+# Cài các dependency hệ thống + rust
+RUN apt update -y && \
+    apt install -y awscli curl build-essential && \
+    curl https://sh.rustup.rs -sSf | sh -s -- -y && \
+    export PATH="$HOME/.cargo/bin:$PATH"
+
+# Thêm Rust vào PATH (cho cả RUN bên dưới)
+ENV PATH="/root/.cargo/bin:$PATH"
 
 WORKDIR /app
 
 COPY . /app
 
-# Cài các thư viện Python từ requirements.txt
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
